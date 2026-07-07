@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -12,8 +11,8 @@ import java.util.stream.Stream;
 public class FileManager {
     private final File directory;
 
-    public FileManager(String path){
-        this.directory= new File(path);
+    public FileManager(String dir){
+        this.directory= new File(dir);
         validateDirectory();
     }
 
@@ -30,12 +29,6 @@ public class FileManager {
         }
     }
 
-    public File [] getSortedContent(){
-        File[] files = getFiles(directory);
-        Arrays.sort(files);
-        return files;
-    }
-
     private static File[] getFiles(File directory) {
         File[] files = directory.listFiles();
         if (files==null){
@@ -44,9 +37,19 @@ public class FileManager {
         return files;
     }
 
-    public static void readFilesRecursive (File directory) {
+    private static File [] getSortedFiles(File directory){
         File[] files = getFiles(directory);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Arrays.sort(files);
+        return files;
+    }
+
+    public File[] getSortedContent(){
+        return getSortedFiles(directory);
+    }
+
+    public static void readFilesRecursive (File directory) {
+        File[] files = getSortedFiles(directory);
+        SimpleDateFormat sdf = new SimpleDateFormat(" dd/MM/yyyy HH:mm");
         for (File file : files) {
             if (file.isDirectory()) {
                 System.out.println("Directory: " + file.getName() + sdf.format(file.lastModified()));
@@ -57,19 +60,68 @@ public class FileManager {
         }
     }
 
-    public static void saveFilesRecursive (File directory, String newFile) {
-        File[] files = getFiles(directory);
+    public static void saveFilesRecursive (File directory, String outputFile) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            writeFilesRecursive(directory, writer, 0);
+        }
+    }
+
+    private static void writeFilesRecursive (File directory, BufferedWriter writer, int level) throws IOException{
+        File[] files = getSortedFiles(directory);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String indent= "   ".repeat(level);
+
         for (File file : files) {
             if (file.isDirectory()) {
-                System.out.println("Directory: " + file.getName() + sdf.format(file.lastModified()));
-                readFilesRecursive(file);
+                writer.write(indent + "Directory: " + file.getName() + " " + sdf.format(file.lastModified()));
+                writer.newLine();
+                writeFilesRecursive(file, writer,level + 1);
             } else {
-                System.out.println("File: " + file.getName() + sdf.format(file.lastModified()));
+                writer.write(indent + "File: " + file.getName() +" "+ sdf.format(file.lastModified()));
+                writer.newLine();
             }
         }
     }
-}
+
+    public static void readTxtFile (String nameFile) throws IOException{
+        File file = new File(nameFile);
+        validateTxt(file);
+        try(BufferedReader reader = new BufferedReader(new FileReader(nameFile))){
+            String line;
+            while ((line = reader.readLine()) !=null){
+                System.out.println(line);
+            }
+        }
+    }
+
+    private static void validateTxt(File fileTxt) {
+        if (!fileTxt.exists()) {
+            throw new IllegalArgumentException("File doesn't exist");
+        }
+        if (!fileTxt.isFile()) {
+            throw new IllegalArgumentException("Path isn't a file");
+        }
+        if (!fileTxt.getName().toLowerCase().endsWith(".txt")) {
+            throw new IllegalArgumentException("File isn't a .txt file");
+        }
+    }
+
+    public static void serializeObject(Object obj, String fileDirectory) throws IOException {
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileDirectory))) {
+            output.writeObject(obj);
+        }
+    }
+
+    public static Object deserializeObject(String fileDirectory) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream input = new ObjectInputStream(new FileInputStream(fileDirectory))) {
+            return input.readObject();
+        }
+    }
+
+
+
+    }
+
 
 
 
@@ -91,11 +143,11 @@ public class FileManager {
 //        }
 //    }
 
-    public void showSortedContent(){
-        for (File f : getSortedContent()){
-            System.out.println(f.getName());
-        }
-    }
+//    public void showSortedContent(){
+//        for (File f : getSortedContent()){
+//            System.out.println(f.getName());
+//        }
+//    }
 
 
 
@@ -125,8 +177,7 @@ public class FileManager {
 //        if (filesdirectory==null){
 //            throw new IllegalArgumentException("Can´t have access to directory");
 //        }
-//    }
-}
+//    }}
 
 
 
