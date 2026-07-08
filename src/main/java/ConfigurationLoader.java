@@ -7,7 +7,9 @@ public class ConfigurationLoader {
 
     public ConfigurationLoader() throws IOException {
         properties = new Properties();
-        properties.load(new FileInputStream("configuration.properties")); //Cerrar FileInputStream
+        try (FileInputStream input = new FileInputStream("configuration.properties")) {
+            properties.load(input);
+        }
     }
 
     public String getPropertyDirectory() {
