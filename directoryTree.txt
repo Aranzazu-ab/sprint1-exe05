@@ -1,0 +1,7 @@
+Directory: java 08/07/2026 23:29
+   File: Album.java 08/07/2026 09:43
+   File: ConfigurationLoader.java 08/07/2026 12:40
+   File: FileManager.java 08/07/2026 22:59
+   File: Main.java 08/07/2026 23:29
+   File: MainL2.java 08/07/2026 23:11
+Directory: resources 01/07/2026 10:28

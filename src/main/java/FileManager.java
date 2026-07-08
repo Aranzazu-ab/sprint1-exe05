@@ -1,12 +1,8 @@
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class FileManager {
     private final File directory;
@@ -47,15 +43,26 @@ public class FileManager {
         return getSortedFiles(directory);
     }
 
-    public static void readFilesRecursive (File directory) {
+    public static List<File> readFilesRecursive (File directory) {//TODO he cambiado de void a list
+        List<File> result = new ArrayList<>();
         File[] files = getSortedFiles(directory);
-        SimpleDateFormat sdf = new SimpleDateFormat(" dd/MM/yyyy HH:mm");
         for (File file : files) {
+            result.add(file);
             if (file.isDirectory()) {
-                System.out.println("Directory: " + file.getName() + sdf.format(file.lastModified()));
-                readFilesRecursive(file);
+                result.addAll(readFilesRecursive(file));
+            }
+        }
+        return result;
+    }
+
+    public static void printFilesRecursive (File directory){//TODO meter aqui sdk
+        SimpleDateFormat sdf = new SimpleDateFormat(" dd/MM/yyyy HH:mm");
+        List<File> files= readFilesRecursive(directory);
+        for (File f: files){
+            if(f.isDirectory()){
+                System.out.println("Directory: "+f.getName()+" "+sdf.format(f.lastModified()));
             } else {
-                System.out.println("File: " + file.getName() + sdf.format(file.lastModified()));
+                System.out.println("File: " + f.getName()+ " " + sdf.format(f.lastModified()));
             }
         }
     }
@@ -70,7 +77,6 @@ public class FileManager {
         File[] files = getSortedFiles(directory);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         String indent= "   ".repeat(level);
-
         for (File file : files) {
             if (file.isDirectory()) {
                 writer.write(indent + "Directory: " + file.getName() + " " + sdf.format(file.lastModified()));
@@ -83,14 +89,23 @@ public class FileManager {
         }
     }
 
-    public static void readTxtFile (String nameFile) throws IOException{
+    public static List<String> readTxtFile (String nameFile) throws IOException{
         File file = new File(nameFile);
         validateTxt(file);
-        try(BufferedReader reader = new BufferedReader(new FileReader(nameFile))){
+        List <String> lines = new ArrayList<>();
+        try(BufferedReader reader = new BufferedReader(new FileReader(file))){
             String line;
             while ((line = reader.readLine()) !=null){
-                System.out.println(line);
+                lines.add(line);
             }
+        }
+        return lines;
+    }
+
+    public static void printTxtFile(String nameFile) throws IOException {
+        List<String> lines = readTxtFile(nameFile);
+        for (String line : lines) {
+            System.out.println(line);
         }
     }
 
@@ -117,67 +132,5 @@ public class FileManager {
             return input.readObject();
         }
     }
-
-
-
-    }
-
-
-
-
-//    private void showDirectoryTree(File directory, int depth) {
-//        File[] files = getFiles(directory);
-//        Arrays.sort(files, Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER));
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-//
-//        for (File f : files) {
-//            String type = f.isDirectory() ? "D" : "F";
-//            String lastModified = sdf.format(new Date(f.lastModified()));
-//            String indent = "  ".repeat(depth);
-//
-//            System.out.println(indent + "[" + type + "] " + f.getName() + " - " + lastModified);
-//
-//            if (f.isDirectory()) {
-//                showDirectoryTree(f, depth + 1);
-//            }
-//        }
-//    }
-
-//    public void showSortedContent(){
-//        for (File f : getSortedContent()){
-//            System.out.println(f.getName());
-//        }
-//    }
-
-
-
-//    public List<Path> getSortedContent() throws IOException {
-//        try (Stream<Path> stream = Files.list(directory)) {
-//            return stream
-//                    .sorted(Comparator.comparing(
-//                            path -> path.getFileName().toString().toLowerCase()
-//                    ))
-//                    .collect(Collectors.toList());
-//        }
-//    }
-
-//    public void showSortedContent() throws IOException {
-//        for (Path path : getSortedContent()) {
-//            System.out.println(path.getFileName());
-//        }
-//    }
-
-
-
-
-
-
-//    private void useDirectory(){
-//        File[] filesdirectory = directory.listFiles();
-//        if (filesdirectory==null){
-//            throw new IllegalArgumentException("Can´t have access to directory");
-//        }
-//    }}
-
-
+}
 

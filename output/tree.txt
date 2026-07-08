@@ -1,21 +1,7 @@
-Directory: ABANS 16/04/2026 13:07
-   File: Benvinguda i presentació (1) - copia.docx 08/01/2026 12:54
-   File: Benvinguda i presentació (1).docx 08/01/2026 12:54
-   File: Cinquena sessió 5 de febrer. Pronoms relatius.docx 12/02/2026 18:23
-   File: Cinquena sessió 5 de febrer. Text sobre dones i ciència (1) - copia.docx 12/02/2026 18:16
-   File: Cinquena sessió 5 de febrer. Text sobre dones i ciència (1).docx 12/02/2026 18:16
-   File: Cinquena sessió 5 de febrer. Text sobre dones i ciència - copia.docx 12/02/2026 18:15
-   File: Cinquena sessió 5 de febrer. Text sobre dones i ciència.docx 12/02/2026 18:15
-   File: Elemental 3_Pla_treball bo.doc 25/02/2026 23:39
-   File: Primera sessió 8 de gener - copia.docx 12/01/2026 20:17
-   File: Primera sessió 8 de gener.docx 12/01/2026 20:17
-   File: RECIBO E3.pdf 16/12/2025 12:01
-   File: Segona sessió - copia.docx 15/01/2026 21:03
-   File: Segona sessió 15 de gener (1) - copia.docx 29/01/2026 22:58
-   File: Segona sessió 15 de gener (1).docx 29/01/2026 22:58
-   File: Segona sessió 15 de gener - copia.docx 22/01/2026 19:09
-   File: Segona sessió 15 de gener.docx 22/01/2026 19:09
-   File: Segona sessió.docx 15/01/2026 21:03
-   File: Sisena sessió 12 de febrer.docx 19/02/2026 20:44
-File: Documentos - Acceso directo.lnk 08/07/2026 00:00
-File: Intermedi 1_Pla_treball (1).pdf 14/04/2026 13:07
+File: Album.java 08/07/2026 09:43
+File: ConfigurationLoader.java 08/07/2026 12:31
+File: FileManager.java 08/07/2026 11:55
+File: Main.java 08/07/2026 09:43
+File: MainL2.java 08/07/2026 11:52
+Directory: org 01/07/2026 10:28
+   Directory: example 04/07/2026 20:56

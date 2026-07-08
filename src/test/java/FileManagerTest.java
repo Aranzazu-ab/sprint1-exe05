@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.Test;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
@@ -21,10 +20,14 @@ public class FileManagerTest {
         Exception ex = assertThrows(IllegalArgumentException.class, () -> new FileManager(temporalFile.getPath()));
         assertTrue(ex.getMessage().contains("isn't a directory"));
     }
-
     @Test
-    public void shouldNotThrowWhenPathIsAValidDirectory() {
-        assertDoesNotThrow(() -> new FileManager("src"));
+    public void shouldThrowWhenIsNotATxtFile() throws IOException {
+        File temporalFile = File.createTempFile("test", ".pdf");
+        temporalFile.deleteOnExit();
+        Exception ex = assertThrows(IllegalArgumentException.class,
+                () -> FileManager.readTxtFile(temporalFile.getPath())
+        );
+        assertTrue(ex.getMessage().contains("isn't a .txt file"));
     }
 
     @Test
@@ -51,26 +54,12 @@ public class FileManagerTest {
         assertTrue(new File(subDir, "ztest.txt").createNewFile());
         assertTrue(new File(subDir, "btest.txt").createNewFile());
 
-        ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream(); //crearbuffer para guardar
-        PrintStream originalOut = System.out;//guardar el print original
-        System.setOut(new PrintStream(outputBuffer));//sistemout guardara en buffer
-        FileManager.readFilesRecursive(temporalDir);
-        System.setOut(originalOut);//regreso a imprimir el pantalla no en buffer
-        String output = outputBuffer.toString();
-
-        assertTrue(output.contains("Directory: atest"));
-        assertTrue(output.contains("File: btest.txt"));
-        assertTrue(output.contains("File: ztest.txt"));
-        assertTrue(output.contains("File: test.txt"));
-
-        int positionAtest = output.indexOf("atest");
-        int positionBtest = output.indexOf("btest.txt");
-        int positionZtest = output.indexOf("ztest.txt");
-        int positionTest = output.indexOf("test.txt");
-
-        assertTrue(positionAtest < positionBtest);
-        assertTrue(positionBtest < positionZtest);
-        assertTrue(positionZtest < positionTest);
+        List<File> treeTest = FileManager.readFilesRecursive(temporalDir);
+        assertEquals(4, treeTest.size());
+        assertEquals("atest", treeTest.get(0).getName());
+        assertEquals("btest.txt", treeTest.get(1).getName());
+        assertEquals("ztest.txt", treeTest.get(2).getName());
+        assertEquals("test.txt", treeTest.get(3).getName());
     }
 
     @Test
@@ -105,28 +94,19 @@ public class FileManagerTest {
     }
 
     @Test
-    public void shouldPrintTextFileContent() throws IOException{
+    public void shoulReadTextFileContent() throws IOException{
         File temporalFile = File.createTempFile("readTest", ".txt");
         temporalFile.deleteOnExit();
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(temporalFile))) {
             writer.write("This is a test.");
             writer.newLine();
             writer.write("To prove code.");
         }
 
-        ByteArrayOutputStream outputBuffer = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputBuffer));
-
-        FileManager.readTxtFile(temporalFile.getPath());
-        System.setOut(originalOut);
-
-        String output = outputBuffer.toString();
-        assertTrue(output.contains("This is a test."));
-        assertTrue(output.contains("To prove code."));
+        List<String> result = FileManager.readTxtFile(temporalFile.getPath());
+        assertEquals(2, result.size());
+        assertEquals("This is a test.", result.get(0));
+        assertEquals("To prove code.", result.get(1));
     }
-
-
 }
 

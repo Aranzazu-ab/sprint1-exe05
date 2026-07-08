@@ -1,42 +1,49 @@
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        if (args.length < 1) {
-            System.out.println("Usage: java Main <directory-path>");
-            return;
-        }
-
-        String targetDirectory = args[0];
-
-        FileManager fileManager = new FileManager(targetDirectory);
-        System.out.println("=== Exercise 1: Sorted directory content ===");
-        for (File file : fileManager.getSortedContent()) {
+        FileManager manager = new FileManager("src/main");
+        System.out.println("=Directory content sorted =");
+        File[] content = manager.getSortedContent();
+        for (File file : content) {
             System.out.println(file.getName());
         }
+        System.out.println("\n= Recursive directory tree =");
+        FileManager.printFilesRecursive(manager.getDirectory());
+        System.out.println("\n= Save directory tree to TXT =");
+        FileManager.saveFilesRecursive(
+                manager.getDirectory(),
+                "directoryTree.txt"
+        );
 
-        System.out.println("\n=== Exercise 2: Recursive tree (console) ===");
-        FileManager.readFilesRecursive(fileManager.getDirectory());
+        System.out.println("Tree was saved");
 
-        String outputPath = "output" + File.separator + "tree.txt";
-        new File("output").mkdirs();
-        FileManager.saveFilesRecursive(fileManager.getDirectory(), outputPath);
-        System.out.println("\n=== Exercise 3: Tree saved to " + outputPath + " ===");
+        System.out.println("\n= Reading TXT file =");
+        FileManager.printTxtFile("directoryTree.txt");
 
-        System.out.println("\n=== Exercise 4: Reading " + outputPath + " ===");
-        FileManager.readTxtFile(outputPath);
+        System.out.println("\n= Serialization =");
+        List<String> photos = new ArrayList<>();
+        photos.add("photo1.jpg");
+        photos.add("photo2.jpg");
+        photos.add("photo3.jpg");
 
-        String albumPath = "output" + File.separator + "album.ser";
-        Album album = new Album("Summer Trip", Arrays.asList("beach.jpg", "sunset.jpg", "friends.jpg"));
+        Album album = new Album(
+                "My holidays",
+                photos
+        );
 
-        FileManager.serializeObject(album, albumPath);
-        System.out.println("\n=== Exercise 5: Serialized album ===");
-        System.out.println(album);
+        FileManager.serializeObject(
+                album,
+                "album.ser"
+        );
 
-        Album recoveredAlbum = (Album) FileManager.deserializeObject(albumPath);
-        System.out.println("Deserialized album:");
-        System.out.println(recoveredAlbum);
+        Album restoredAlbum = (Album) FileManager.deserializeObject(
+                "album.ser"
+        );
+        System.out.println(restoredAlbum);
     }
 }
